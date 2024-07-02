@@ -259,7 +259,7 @@ build:nvcc-cmake-minimum:
       -D BUILD_SHARED_LIBS=$BUILD_SHARED_LIBS
       -D BUILD_TEST=OFF
       -D CMAKE_BUILD_TYPE=$BUILD_TYPE
-      -D CMAKE_CXX_COMPILER:FILEPATH="$ROCM_PATH/bin/clang++.exe"
+      -D CMAKE_CXX_COMPILER:FILEPATH="${env:HIP_PATH}/bin/clang++.exe"
       -D CMAKE_INSTALL_PREFIX:PATH="$ROCRAND_DIR/build/install"
       -D GPU_TARGETS=$GPU_TARGETS *>&1
     - \& cmake --build "$ROCRAND_DIR/build" --target install *>&1
@@ -273,7 +273,7 @@ build:nvcc-cmake-minimum:
       -D BUILD_SHARED_LIBS=$BUILD_SHARED_LIBS
       -D BUILD_TEST=ON
       -D CMAKE_BUILD_TYPE=$BUILD_TYPE
-      -D CMAKE_CXX_COMPILER:FILEPATH="$ROCM_PATH/bin/clang++.exe"
+      -D CMAKE_CXX_COMPILER:FILEPATH="${env:HIP_PATH}/bin/clang++.exe"
       -D CMAKE_INSTALL_PREFIX:PATH="$CI_PROJECT_DIR/build/install"
       -D CMAKE_PREFIX_PATH:PATH="$ROCRAND_DIR/build/install"
       -D DISABLE_WERROR=OFF
@@ -512,7 +512,7 @@ test:rocm-windows:
       -B "$CI_PROJECT_DIR/build/install_test"
       -G Ninja
       -D CMAKE_BUILD_TYPE=$BUILD_TYPE
-      -D CMAKE_CXX_COMPILER:FILEPATH="$ROCM_PATH/bin/clang++.exe"
+      -D CMAKE_CXX_COMPILER:FILEPATH="${env:HIP_PATH}/bin/clang++.exe"
       -D CMAKE_PREFIX_PATH="$CI_PROJECT_DIR/build/install;$ROCRAND_DIR/build/install" *>&1
     - \& cmake --build "$CI_PROJECT_DIR/build/install_test" *>&1
     - \& cmake -E copy "$ROCRAND_DIR/build/install/bin/rocRAND.dll" "$CI_PROJECT_DIR/build/install_test" *>&1
