@@ -34,6 +34,7 @@ include:
       - /deps-rocm.yaml
       - /deps-nvcc.yaml
       - /deps-windows.yaml
+      - /deps-compiler-acceleration.yaml
       - /gpus-rocm.yaml
       - /gpus-nvcc.yaml
       - /rules.yaml
@@ -69,9 +70,11 @@ copyright-date:
   extends:
     - .deps:rocm
     - .deps:cmake-minimum
+    - .deps:compiler-acceleration
   before_script:
     - !reference [".deps:rocm", before_script]
     - !reference [".deps:cmake-minimum", before_script]
+    - !reference [".deps:compiler-acceleration", before_script]
 
 .nvcc:cmake-minimum:
   variables:
@@ -79,9 +82,11 @@ copyright-date:
   extends:
     - .deps:nvcc
     - .deps:cmake-minimum
+    - .deps:compiler-acceleration
   before_script:
     - !reference [".deps:nvcc", before_script]
     - !reference [".deps:cmake-minimum", before_script]
+    - !reference [".deps:compiler-acceleration", before_script]
 
 .rocm:rocrand:
   stage: deps
@@ -107,6 +112,8 @@ copyright-date:
       -D DEPENDENCIES_FORCE_DOWNLOAD=OFF
       -D BUILD_FILE_REORG_BACKWARD_COMPATIBILITY=ON
       -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
+      -D CMAKE_C_COMPILER_LAUNCHER=phc_sccache_c
+      -D CMAKE_CXX_COMPILER_LAUNCHER=phc_sccache_cxx
       -D GPU_TARGETS=${GPU_TARGETS}
       -D ROCM_DEP_ROCMCORE=OFF
     - cmake --build ${ROCRAND_DIR}/build --target package
@@ -153,6 +160,8 @@ deps:rocrand-static:
       -D BUILD_SHARED_LIBS=${BUILD_SHARED_LIBS}
       -D DISABLE_WERROR=OFF
       -D GPU_TARGETS=${GPU_TARGETS}
+      -D CMAKE_C_COMPILER_LAUNCHER=phc_sccache_c
+      -D CMAKE_CXX_COMPILER_LAUNCHER=phc_sccache_cxx
     - cmake --build ${CI_PROJECT_DIR}/build
     - cmake --build ${CI_PROJECT_DIR}/build --target package
 
@@ -174,6 +183,9 @@ deps:rocrand-static:
       -D DEPENDENCIES_FORCE_DOWNLOAD=ON
       -D NVGPU_TARGETS=${GPU_TARGETS}
       -D BUILD_WITH_LIB=CUDA
+      -D CMAKE_C_COMPILER_LAUNCHER=phc_sccache_c
+      -D CMAKE_CXX_COMPILER_LAUNCHER=phc_sccache_cxx
+      -D CMAKE_CUDA_COMPILER_LAUNCHER=phc_sccache_cuda
     - cmake --build ${CI_PROJECT_DIR}/build
     - cmake --build ${CI_PROJECT_DIR}/build --target package
 
@@ -437,7 +449,11 @@ test:nvcc-package:
       -D BUILD_FORTRAN_WRAPPER=OFF
       -D BUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
       -D CMAKE_CXX_COMPILER=${COMPILER}
+      -D CMAKE_C_COMPILER_LAUNCHER=phc_sccache_c
+      -D CMAKE_CXX_COMPILER_LAUNCHER=phc_sccache_cxx
       ${WITH_LIB_CUDA}
+    # Build without root, otherwise phc_sccache_cxx cannot be found.
+    - cmake --build ${CI_PROJECT_DIR}/build_only_install
     - ${SUDO_CMD} cmake --build ${CI_PROJECT_DIR}/build_only_install --target install
     - cmake
       -S ${CI_PROJECT_DIR}/test/package/
