@@ -260,6 +260,7 @@ build:nvcc-cmake-minimum:
       -D BUILD_TEST=OFF
       -D CMAKE_BUILD_TYPE=$BUILD_TYPE
       -D CMAKE_CXX_COMPILER:FILEPATH="${env:HIP_PATH}/bin/clang++.exe"
+      -D CMAKE_PREFIX_PATH:PATH="${env:HIP_PATH}/lib/cmake"
       -D CMAKE_INSTALL_PREFIX:PATH="$ROCRAND_DIR/build/install"
       -D GPU_TARGETS=$GPU_TARGETS *>&1
     - \& cmake --build "$ROCRAND_DIR/build" --target install *>&1
@@ -275,8 +276,8 @@ build:nvcc-cmake-minimum:
       -D CMAKE_BUILD_TYPE=$BUILD_TYPE
       -D CMAKE_NO_SYSTEM_FROM_IMPORTED=TRUE
       -D CMAKE_CXX_COMPILER:FILEPATH="${env:HIP_PATH}/bin/clang++.exe"
+      -D CMAKE_PREFIX_PATH:PATH="$ROCRAND_DIR/build/install/lib/cmake/rocrand;${env:HIP_PATH}/lib/cmake"
       -D CMAKE_INSTALL_PREFIX:PATH="$CI_PROJECT_DIR/build/install"
-      -D CMAKE_PREFIX_PATH:PATH="$ROCRAND_DIR/build/install"
       -D DISABLE_WERROR=OFF
       -D GPU_TARGETS=$GPU_TARGETS *>&1
     # Build hipRAND
@@ -514,7 +515,8 @@ test:rocm-windows:
       -G Ninja
       -D CMAKE_BUILD_TYPE=$BUILD_TYPE
       -D CMAKE_CXX_COMPILER:FILEPATH="${env:HIP_PATH}/bin/clang++.exe"
-      -D CMAKE_PREFIX_PATH="$CI_PROJECT_DIR/build/install;$ROCRAND_DIR/build/install" *>&1
+      -D CMAKE_NO_SYSTEM_FROM_IMPORTED=TRUE
+      -D CMAKE_PREFIX_PATH="$CI_PROJECT_DIR/build/install;$ROCRAND_DIR/build/install;${env:HIP_PATH}/lib/cmake" *>&1
     - \& cmake --build "$CI_PROJECT_DIR/build/install_test" *>&1
     - \& cmake -E copy "$ROCRAND_DIR/build/install/bin/rocRAND.dll" "$CI_PROJECT_DIR/build/install_test" *>&1
     - \& cmake -E copy "$CI_PROJECT_DIR/build/install/bin/hipRAND.dll" "$CI_PROJECT_DIR/build/install_test" *>&1
