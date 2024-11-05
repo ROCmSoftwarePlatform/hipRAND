@@ -3,6 +3,12 @@
 Documentation for hipRAND is available at
 [https://rocm.docs.amd.com/projects/hipRAND/en/latest/](https://rocm.docs.amd.com/projects/hipRAND/en/latest/).
 
+## hipRAND-2.x.x for ROCm 6.x.x
+
+### Changes
+
+* Changed the C++ version from 14 to 17. C++14 will be deprecated in the next major release.
+
 ## hipRAND 2.11.0 for ROCm 6.2.0
 
 ### Added
