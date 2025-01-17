@@ -2,6 +2,7 @@
 # This conanfile is used to install development requirements,
 # e.g.
 #   conan install -o clients=True -if build/deps .
+#test
 
 from conans import ConanFile, CMake
 
